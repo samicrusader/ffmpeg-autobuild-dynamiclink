@@ -5,11 +5,11 @@ updates:
     schedule:
       interval: daily
       time: '09:00'
-      timezone: Asia/Manila
+      timezone: America/New_York
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: daily
       time: '09:00'
-      timezone: Asia/Manila
+      timezone: America/New_York

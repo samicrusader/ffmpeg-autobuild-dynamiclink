@@ -57,13 +57,13 @@ jobs:
           echo date-time-tag=$(date +'%Y-%m-%d-%H-%M') >> $GITHUB_OUTPUT
 
       - name: Package output files for FFmpeg ${{ matrix.os }} nonfree
-        run: 7z a ffmpeg-shared.7z $GITHUB_WORKSPACE/ffmpeg-source/bin/*.dll $GITHUB_WORKSPACE/ffmpeg-source/bin/*.exe -mx9
+        run: 7z a ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z $GITHUB_WORKSPACE/ffmpeg-source/bin/*.dll $GITHUB_WORKSPACE/ffmpeg-source/bin/*.exe -mx9
           
       - name: Upload FFmpeg ${{ matrix.os }} nonfree
         uses: actions/upload-artifact@v3
         with:
-          name: ffmpeg-archive-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree
-          path: ffmpeg-shared.7z
+          name: ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z
+          path: ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z
           
     outputs:
       date-time-before: ${{ steps.date-time-before.outputs.date-time }}
@@ -80,12 +80,12 @@ jobs:
       - name: Download FFmpeg archive win64
         uses: actions/download-artifact@v3
         with:
-          name: ffmpeg-archive-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win64-nonfree
+          name: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win64-nonfree.7z
           
       - name: Download FFmpeg archive win32
         uses: actions/download-artifact@v3
         with:
-          name: ffmpeg-archive-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win32-nonfree
+          name: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win32-nonfree.7z
           
       - name: Release
         run: |

@@ -1,11 +1,17 @@
 # FFmpeg Latest Autobuilds for Windows
 
+Full credit for this project goes to [AnimMouse](https://github.com/AnimMouse/ffmpeg-autobuild).
+
 ![Build FFmpeg on push](https://github.com/samicrusader/ffmpeg-autobuild-dynamiclink/workflows/Build%20FFmpeg%20on%20push/badge.svg)
 ![Build FFmpeg on pull request](https://github.com/samicrusader/ffmpeg-autobuild-dynamiclink/workflows/Build%20FFmpeg%20on%20pull%20request/badge.svg)
 
 [FFmpeg](https://ffmpeg.org/) latest nonfree git/snapshot/development/master/nightly builds with additional libraries/dependencies.
 
 [Downloads](https://github.com/samicrusader/ffmpeg-autobuild-dynamiclink/releases)
+
+## Why is this not a fork?
+
+GitHub prevents forks of projects from having certain features, one of them being pushing releases to a fork using GitHub Actions. Why? Some comment on some issue I forgot about said it was something about security or something. I don't fucking know at all! yayayayayayaya
 
 #### Schedule
 

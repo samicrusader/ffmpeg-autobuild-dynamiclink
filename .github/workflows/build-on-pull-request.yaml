@@ -57,13 +57,13 @@ jobs:
           echo date-time-tag=$(date +'%Y-%m-%d-%H-%M') >> $GITHUB_OUTPUT
 
       - name: Package output files for FFmpeg ${{ matrix.os }} nonfree
-        run: 7z a ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-${{ matrix.os }}-nonfree.7z $GITHUB_WORKSPACE/ffmpeg-source/bin/*.dll $GITHUB_WORKSPACE/ffmpeg-source/bin/*.exe -mx9
+        run: 7z a ffmpeg-shared.7z $GITHUB_WORKSPACE/ffmpeg-source/bin/*.dll $GITHUB_WORKSPACE/ffmpeg-source/bin/*.exe -mx9
           
       - name: Upload FFmpeg ${{ matrix.os }} nonfree
         uses: actions/upload-artifact@v3
         with:
-          name: ffmpeg-archive-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-${{ matrix.os }}-nonfree
-          path: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-${{ matrix.os }}-nonfree.7z
+          name: ffmpeg-archive-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree
+          path: ffmpeg-shared.7z
           
     outputs:
       date-time-before: ${{ steps.date-time-before.outputs.date-time }}

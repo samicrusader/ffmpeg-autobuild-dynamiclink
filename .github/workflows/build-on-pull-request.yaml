@@ -1,0 +1,100 @@
+name: Build FFmpeg on pull request
+on:
+  pull_request_target:
+    paths:
+      - ffmpeg-source
+      - ffmpeg-windows-build-helpers
+      - dependencies.sh
+      - .github/workflows/build-on-push.yaml
+      - .github/workflows/build-on-pull-request.yaml
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' || github.actor == 'AnimMouse' || github.actor == 'samicrusader'
+    strategy:
+      matrix:
+        os: [win64, win32]
+        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          
+      - name: Install dependencies
+        run: ./dependencies.sh
+        
+      - name: Get current FFmpeg git commit SHA & date
+        id: git-sha-date
+        working-directory: ffmpeg-source
+        run: |
+          echo git-sha=$(git rev-parse --short HEAD) >> $GITHUB_OUTPUT
+          echo git-date=$(git log -1 --format=%ci) >> $GITHUB_OUTPUT
+          
+      - name: Get current ffmpeg-windows-build-helpers git commit SHA
+        id: helper-git-sha
+        working-directory: ffmpeg-windows-build-helpers
+        run: echo git-sha=$(git rev-parse --short HEAD) >> $GITHUB_OUTPUT
+        
+      - name: Move ffmpeg-windows-build-helpers
+        run: mv -v ./ffmpeg-windows-build-helpers/* ./
+        
+      - name: Get current date & time before build
+        id: date-time-before
+        run: echo date-time=$(date +'%Y-%m-%d %H:%M') >> $GITHUB_OUTPUT
+        
+      - name: Compile FFmpeg using ffmpeg-windows-build-helpers
+        run: ./cross_compile_ffmpeg.sh --build-ffmpeg-shared=y --build-ffmpeg-static=n --ffmpeg-source-dir=$GITHUB_WORKSPACE/ffmpeg-source --gcc-cpu-count=$(nproc) --disable-nonfree=n --sandbox-ok=y --compiler-flavors=${{ matrix.os }}
+        
+      - name: Get current date & time after build
+        id: date-time-after
+        run: |
+          echo date-time=$(date +'%Y-%m-%d %H:%M') >> $GITHUB_OUTPUT
+          echo date-time-tag=$(date +'%Y-%m-%d-%H-%M') >> $GITHUB_OUTPUT
+
+      - name: Package output files for FFmpeg ${{ matrix.os }} nonfree
+        run: 7z a ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z $GITHUB_WORKSPACE/ffmpeg-source/bin/*.dll $GITHUB_WORKSPACE/ffmpeg-source/bin/*.exe -mx9
+          
+      - name: Upload FFmpeg ${{ matrix.os }} nonfree
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z
+          path: ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z
+          
+    outputs:
+      date-time-before: ${{ steps.date-time-before.outputs.date-time }}
+      date-time-after: ${{ steps.date-time-after.outputs.date-time }}
+      date-time-after-tag: ${{ steps.date-time-after.outputs.date-time-tag }}
+      git-sha: ${{ steps.git-sha-date.outputs.git-sha }}
+      git-date: ${{ steps.git-sha-date.outputs.git-date }}
+      helper-git-sha: ${{ steps.helper-git-sha.outputs.git-sha }}
+      
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download FFmpeg archive win64
+        uses: actions/download-artifact@v3
+        with:
+          name: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win64-nonfree.7z
+          
+      - name: Download FFmpeg archive win32
+        uses: actions/download-artifact@v3
+        with:
+          name: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win32-nonfree.7z
+          
+      - name: Release
+        run: |
+          gh release create "a-${{ needs.build.outputs.date-time-after-tag }}" \
+          "ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win64-nonfree.7z" \
+          "ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win32-nonfree.7z" \
+          -n "FFmpeg shared nonfree git-${{ needs.build.outputs.git-sha }} in ${{ needs.build.outputs.git-date }} built on ${{ needs.build.outputs.date-time-after }} started at ${{ needs.build.outputs.date-time-before }}
+          Using ffmpeg-windows-build-helpers git-${{ needs.build.outputs.helper-git-sha }}" \
+          -p -t "Auto ${{ needs.build.outputs.date-time-after }} ${{ needs.build.outputs.git-sha }}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}

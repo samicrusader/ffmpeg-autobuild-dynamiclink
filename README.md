@@ -11,7 +11,7 @@ Full credit for this project goes to [AnimMouse](https://github.com/AnimMouse/ff
 
 ## Why is this not a fork?
 
-GitHub prevents forks of projects from having certain features, one of them being pushing releases to a fork using GitHub Actions. Why? Some comment on some issue I forgot about said it was something about security or something. I don't fucking know at all! yayayayayayaya
+GitHub prevents forks of projects from having certain features, one of them being pushing releases using GitHub Actions. Why? Some comment on some issue I forgot about said it was something about security or something. I don't fucking know at all! yayayayayayaya
 
 ## What is included?
 
@@ -23,14 +23,11 @@ These builds are nonfree with Fraunhofer FDK AAC ([libfdk_aac](https://github.co
 
 ## Schedule
 
-Release builds: Weekly or Every time [ffmpeg-windows-build-helpers](https://github.com/rdp/ffmpeg-windows-build-helpers) updates or someone updates the repository.\
-Pre-release builds: Every 9:00 AM GMT-5 daily except weekends.
+(Usually) every 9:00 AM GMT-5 daily except weekends.
 
 ## Release Retention Policy
 
-(TODO: fix this)
-
-Release builds are kept for two years. Last 1 pre-release build are kept every time a release build are released.
+Latest 10 or so builds are kept. This depends on whether or not a build succeeds, something I am surprised is happening as I write this...
 
 ## Credits
 

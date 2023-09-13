@@ -106,7 +106,7 @@ jobs:
       - name: Delete older pre-releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
-          keep_latest: 1
+          keep_latest: 10
           delete_tags: true
           delete_tag_pattern: a
         env:

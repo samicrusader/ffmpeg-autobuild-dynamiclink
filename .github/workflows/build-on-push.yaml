@@ -60,7 +60,7 @@ jobs:
         run: 7z a ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z $GITHUB_WORKSPACE/ffmpeg-source/bin/*.dll $GITHUB_WORKSPACE/ffmpeg-source/bin/*.exe -mx9
           
       - name: Upload FFmpeg ${{ matrix.os }} nonfree
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z
           path: ffmpeg-shared-${{ steps.git-sha-date.outputs.git-sha }}-${{ steps.helper-git-sha.outputs.git-sha }}-${{ matrix.os }}-nonfree.7z

@@ -78,12 +78,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download FFmpeg archive win64
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win64-nonfree.7z
           
       - name: Download FFmpeg archive win32
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ffmpeg-shared-${{ needs.build.outputs.git-sha }}-${{ needs.build.outputs.helper-git-sha }}-win32-nonfree.7z
           
